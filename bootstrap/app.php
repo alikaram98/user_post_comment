@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Middleware\ThrottleApiRequest;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -14,7 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->api(prepend: [
+            'throttle:api-auth'
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (AuthenticationException $e, Request $request) {
@@ -22,6 +26,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'message' => 'شما نمی‌توانید به این منبع دسترسی داشته باشید.',
                 ], 401);
+            }
+        });
+
+        $exceptions->render(function (ThrottleRequestsException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'درخواست های شما بیش از حد مجاز هست.',
+                ], 429);
             }
         });
     })
