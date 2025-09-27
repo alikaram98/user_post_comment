@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\UserStoreRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -26,6 +28,24 @@ class AuthController extends Controller
         }
     }
 
+    public function login(AuthLoginRequest $request)
+    {
+        try {
+            $user = User::whereEmail($request->email)->first();
+
+            if (Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'token' => $user->createToken('auth-token')->plainTextToken
+                ]); 
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'عملیات ورود کاربر با مشگل مواجه شده است',
+                'errors'  => $e->getMessage()
+            ]);
+        }
+    }
+
     public function logout()
     {
         try {
@@ -40,7 +60,7 @@ class AuthController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
-            return ['message' => 'در خارج کردن کاربر مشگلی پیش آمده', 'errors' => $e->getMessage()];
+            return response()->json(['message' => 'در خارج کردن کاربر مشگلی پیش آمده', 'errors' => $e->getMessage()], 422);
         }
     }
 
