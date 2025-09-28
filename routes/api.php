@@ -36,5 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ->controller(AclController::class)
         ->group(function () {
             Route::post('role', 'roleStore');
+            Route::post('permission', 'permissionStore');
         });
 });

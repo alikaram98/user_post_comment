@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreRoleRequest extends FormRequest
+class StorePermissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,15 +23,15 @@ class StoreRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'unique:roles,name']
+            'name' => ['required', 'string', 'unique:permissions,name']
         ];
     }
 
-    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator): never
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
         throw new HttpResponseException(
             response()->json([
-                'message' => 'لطفا اطلاعات نقش را به درستی وارد کنید',
+                'message' => 'لطفا اطلاعات دسترسی را به درستی وارد کنید',
                 'errors' => $validator->errors()
             ])
         );

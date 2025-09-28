@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\StoreRoleRequest;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class AclController extends Controller
@@ -24,5 +26,18 @@ class AclController extends Controller
         }
     }
 
-    public function setPermission() {}
+    public function permissionStore(StorePermissionRequest $request) {
+        try {
+            Permission::create($request->validated());
+
+            return response()->json([
+                'message' => 'دسترسی با موفقیت اضافه شد',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message'       => 'در ذخیره کردن دسترسی مشگل پیش آمده اس',
+                'error-message' => $e->getMessage()
+            ]);
+        }
+    }
 }
