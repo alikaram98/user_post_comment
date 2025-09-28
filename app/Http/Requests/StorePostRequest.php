@@ -25,7 +25,7 @@ class StorePostRequest extends FormRequest
     {
         return [
             'title'   => ['required', 'string', 'min:5', 'max:30'],
-            'user_id' => ['required', 'exists:users,id'],
+            // 'user_id' => ['required', 'exists:users,id'],
             'text'    => ['required', 'string', 'min: 5']
         ];
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class PostController extends Controller
 {
@@ -30,11 +31,13 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         try {
-            $post = Post::create($request->validated());
+            $post = new Post($request->validated());
+            auth('api')->user()->posts()->save($post);
 
             return response()->json([
                 'message' => 'مقاله با موفقیت اضافه شد',
-                'post'    => $post
+                'post'    => $post,
+                'comments' => $post->comments()->paginate()
             ]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'در اضافه کردن مقاله مشگلی پیش آمده', 'error-message' => $e->getMessage()]);
@@ -49,6 +52,9 @@ class PostController extends Controller
         try {
             return response()->json([
                 'post' => $post,
+                'comments' => $post->load(['comments' => function (Builder $query) {
+                    $query->whereNull('parent_id');
+                }])->paginate()
             ]);
         } catch (\Exception $e) {
             return response()->json([
