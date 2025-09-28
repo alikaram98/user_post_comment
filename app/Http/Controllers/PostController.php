@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
@@ -36,8 +37,6 @@ class PostController extends Controller
 
             return response()->json([
                 'message' => 'مقاله با موفقیت اضافه شد',
-                'post'    => $post,
-                'comments' => $post->comments()->paginate()
             ]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'در اضافه کردن مقاله مشگلی پیش آمده', 'error-message' => $e->getMessage()]);
@@ -50,11 +49,14 @@ class PostController extends Controller
     public function show(Post $post)
     {
         try {
+            $comments = Comment::where([
+                'post_id'   => $post->id,
+                'parent_id' => null
+            ])->with('subComments')->paginate();
+
             return response()->json([
-                'post' => $post,
-                'comments' => $post->load(['comments' => function (Builder $query) {
-                    $query->whereNull('parent_id');
-                }])->paginate()
+                'post'     => $post,
+                'comments' => $comments
             ]);
         } catch (\Exception $e) {
             return response()->json([
