@@ -29,7 +29,16 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        //
+        try {
+            $post = Post::create($request->validated());
+
+            return response()->json([
+                'message' => 'مقاله با موفقیت اضافه شد',
+                'post'    => $post
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'در اضافه کردن مقاله مشگلی پیش آمده', 'error-message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -37,7 +46,16 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        try {
+            return response()->json([
+                'post' => $post,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'در گرفتن مقاله مشگلی پیش آمده',
+                'error'   => $e->getMessage(),
+            ], $e->getCode());
+        }
     }
 
     /**

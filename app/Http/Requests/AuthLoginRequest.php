@@ -30,13 +30,13 @@ class AuthLoginRequest extends FormRequest
         ];
     }
     
-    protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator): never
     {
         throw new HttpResponseException(
             response()->json([
                 'message' => 'لطفا اطلاعات فرم ورود را با دقت وارد کنید',
                 'errors' => $validator->errors()
-            ])
+            ], 422)
         );
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(AuthController::class)
@@ -10,4 +11,12 @@ Route::controller(AuthController::class)
 
         Route::get('/user', 'user')->middleware('auth:sanctum');
         Route::post('/logout', 'logout')->middleware('auth:sanctum');
+    });
+
+Route::prefix('post')
+    ->middleware('auth:sanctum')
+    ->controller(PostController::class)
+    ->group(function () {
+        Route::get('{post}', 'show');
+        Route::post('', 'store');
     });

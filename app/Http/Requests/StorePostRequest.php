@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StorePostRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class StorePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +24,19 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title'   => ['required', 'string', 'min:5', 'max:30'],
+            'user_id' => ['required', 'exists:users,id'],
+            'text'    => ['required', 'string', 'min: 5']
         ];
+    }
+
+    protected function failedValidation(Validator $validator): never
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'message' => 'اطلاعات مقاله را با دقت وارد کنید',
+                'errors' => $validator->errors(),
+            ], 422)
+        );
     }
 }
