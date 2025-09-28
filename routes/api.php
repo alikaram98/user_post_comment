@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AclController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
@@ -29,6 +30,11 @@ Route::middleware('auth:sanctum')->group(function () {
         ->group(function () {
             Route::post('', 'store');
         });
-    
+
     // ACL Routing
+    Route::prefix('acl')
+        ->controller(AclController::class)
+        ->group(function () {
+            Route::post('role', 'roleStore');
+        });
 });
