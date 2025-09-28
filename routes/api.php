@@ -14,17 +14,21 @@ Route::controller(AuthController::class)
         Route::post('/logout', 'logout')->middleware('auth:sanctum');
     });
 
-Route::prefix('post')
-    ->middleware('auth:sanctum')
-    ->controller(PostController::class)
-    ->group(function () {
-        Route::get('{post}', 'show');
-        Route::post('', 'store');
-    });
+Route::middleware('auth:sanctum')->group(function () {
+    // Post Routing
+    Route::prefix('post')
+        ->controller(PostController::class)
+        ->group(function () {
+            Route::get('{post}', 'show');
+            Route::post('', 'store');
+        });
 
-Route::prefix('comment')
-    ->middleware('auth:sanctum')
-    ->controller(CommentController::class)
-    ->group(function () {
-        Route::post('', 'store');
-    });
+    // Comment Routing
+    Route::prefix('comment')
+        ->controller(CommentController::class)
+        ->group(function () {
+            Route::post('', 'store');
+        });
+    
+    // ACL Routing
+});
