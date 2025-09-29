@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->group(function () {
             Route::post('', 'store');
             Route::delete('/{comment}', 'delete');
+            Route::put('/{comment}', 'update');
         });
 
     // ACL Routing
