@@ -2,6 +2,25 @@
 
 Manage nested comments from users who have written for a specific article. <br/>
 
+# Install Project
+To install the project on your system, you need the following requirements:
+
+## Dependency
+- Composer 2.7^
+- xampp with php 8.2.4^ 
+
+## List install command
+```
+git clone https://github.com/alikaram98/user_post_comment.git
+cd user_post_comment
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan db:seed
+php artisan serve
+```
+
 #### Link API:
 
 -   Register user `localhost:8000/api/register` -> POST method 
