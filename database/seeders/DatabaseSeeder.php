@@ -22,5 +22,6 @@ class DatabaseSeeder extends Seeder
         Schema::enableForeignKeyConstraints();
 
         Role::create(['name' => 'Admin', 'guard_name' => 'sanctum']);
+        Role::create(['name' => 'User', 'guard_name' => 'sanctum']);
     }
 }

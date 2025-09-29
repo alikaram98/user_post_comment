@@ -4,6 +4,7 @@ use App\Http\Controllers\AclController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
+use App\Models\Comment;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -29,8 +30,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Comment Routing
     Route::prefix('comment')
         ->controller(CommentController::class)
+        ->middleware('auth:sanctum')
         ->group(function () {
             Route::post('', 'store');
+            Route::delete('/{comment}', 'delete');
         });
 
     // ACL Routing

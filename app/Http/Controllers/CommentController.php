@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comment;
+use Illuminate\Support\Facades\Gate;
 
 class CommentController extends Controller
 {
@@ -21,6 +22,22 @@ class CommentController extends Controller
             return response()->json([
                 'message'       => 'در ذخیره سازی نظر مشگلی به وجود آمده',
                 'error-message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function delete(Comment $comment) {
+        try {
+            Gate::authorize('delete', $comment);
+
+            $comment->delete();
+
+            return response()->json([
+                'message' => 'حذف نظر با موفقیت انجام شد'
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'message' => 'در حذف کردن نظر مشگلی پیش آمده'
             ]);
         }
     }

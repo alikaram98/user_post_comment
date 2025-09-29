@@ -9,6 +9,7 @@ use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -23,10 +24,17 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(function (NotFoundHttpException $e, Request $request): JsonResponse {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'رکوردی یافت نشد'
+                ], 404);
+            }
+        });
         $exceptions->render(function (AccessDeniedHttpException $e, Request $request): JsonResponse {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'message' => 'شما اجازه دسترسی به این منبع را ندارید' 
+                    'message' => 'شما اجازه دسترسی به این منبع را ندارید'
                 ], 403);
             }
         });
