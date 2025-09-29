@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 Route::controller(AuthController::class)
     ->group(function () {
@@ -35,7 +37,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('acl')
         ->controller(AclController::class)
         ->group(function () {
-            Route::post('role', 'roleStore');
-            Route::post('permission', 'permissionStore');
+            Route::get('/user/{user}/role/{role}', 'userSetRole')->can('userRole', Role::class);
+            Route::post('role', 'roleStore')->can('store', Role::class);
+
+            Route::post('permission', 'permissionStore')->can('store', Permission::class);
         });
 });

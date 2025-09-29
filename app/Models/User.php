@@ -26,6 +26,8 @@ class User extends Authenticatable
         'password',
     ];
 
+    protected $guard_name = 'sanctum';
+
     /**
      * The attributes that should be hidden for serialization.
      *

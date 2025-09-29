@@ -14,6 +14,12 @@ class AuthController extends Controller
         try {
             $user = User::create($request->validated());
 
+            if ($user->id === 1) {
+                $user->assignRole('Admin');
+            } else {
+                $user->assignRole('User');
+            }
+
             $token = $user->createToken('auth-token')->plainTextToken;
 
             return response()->json([
@@ -36,7 +42,11 @@ class AuthController extends Controller
             if (Hash::check($request->password, $user->password)) {
                 return response()->json([
                     'token' => $user->createToken('auth-token')->plainTextToken
-                ]); 
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'اطلاعات کاربری به درستی ارسال نشده است'
+                ]);
             }
         } catch (\Exception $e) {
             return response()->json([

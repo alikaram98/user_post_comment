@@ -7,6 +7,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,11 +18,9 @@ class DatabaseSeeder extends Seeder
     {
         Schema::disableForeignKeyConstraints();
         User::truncate();
+        Role::truncate();
         Schema::enableForeignKeyConstraints();
 
-        User::factory(10)->create();
-        $this->call([
-            PostSeeder::class
-        ]);
+        Role::create(['name' => 'Admin', 'guard_name' => 'sanctum']);
     }
 }

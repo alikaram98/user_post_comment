@@ -6,7 +6,9 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,7 +23,15 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (AuthenticationException $e, Request $request) {
+        $exceptions->render(function (AccessDeniedHttpException $e, Request $request): JsonResponse {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'شما اجازه دسترسی به این منبع را ندارید' 
+                ], 403);
+            }
+        });
+
+        $exceptions->render(function (AuthenticationException $e, Request $request): JsonResponse {
             if ($request->is('api/*')) {
                 return response()->json([
                     'message' => 'شما نمی‌توانید به این منبع دسترسی داشته باشید.',
@@ -29,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
-        $exceptions->render(function (ThrottleRequestsException $e, Request $request) {
+        $exceptions->render(function (ThrottleRequestsException $e, Request $request): JsonResponse {
             if ($request->is('api/*')) {
                 return response()->json([
                     'message' => 'درخواست های شما بیش از حد مجاز هست.',
