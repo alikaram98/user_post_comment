@@ -76,6 +76,6 @@ class AuthController extends Controller
 
     public function user(): User
     {
-        return auth('api')->user();
+        return auth()->user();
     }
 }

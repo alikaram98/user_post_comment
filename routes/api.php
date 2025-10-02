@@ -11,14 +11,14 @@ use Spatie\Permission\Models\Role;
 
 Route::controller(AuthController::class)
     ->group(function () {
-        Route::post('register', 'register')->middleware('guest:sanctum')->name('register');
-        Route::post('login', 'login')->middleware('guest:sanctum')->name('login');
+        Route::post('register', 'register')->middleware('guest:api')->name('register');
+        Route::post('login', 'login')->middleware('guest:api')->name('login');
 
-        Route::get('/user', 'user')->middleware('auth:sanctum');
-        Route::post('/logout', 'logout')->middleware('auth:sanctum');
+        Route::get('/user', 'user')->middleware('auth:api');
+        Route::post('/logout', 'logout')->middleware('auth:api');
     });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:api')->group(function () {
     // Post Routing
     Route::prefix('post')
         ->controller(PostController::class)
@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Comment Routing
     Route::prefix('comment')
         ->controller(CommentController::class)
-        ->middleware('auth:sanctum')
+        ->middleware('auth:api')
         ->group(function () {
             Route::post('', 'store');
             Route::delete('/{comment}', 'delete');
