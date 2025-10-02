@@ -18,7 +18,7 @@ Route::controller(AuthController::class)
         Route::post('/logout', 'logout')->middleware('auth:api');
     });
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api', 'verified.api'])->group(function () {
     // Post Routing
     Route::prefix('post')
         ->controller(PostController::class)
