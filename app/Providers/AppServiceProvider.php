@@ -5,10 +5,14 @@ namespace App\Providers;
 use App\Models\User;
 use App\Policies\PermissionPolicy;
 use App\Policies\RolePolicy;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -28,6 +32,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        VerifyEmail::toMailUsing(function ($notifiable, $notifiableUrl) {
+
+            return (new MailMessage)
+                ->subject('Verify Email Address')
+                ->line('Click the button below to verify your email address.')
+                ->action('Verify Email Address', $notifiableUrl);
+        });
+
         Gate::before(function (User $user, string $ability) {
             if ($user->hasRole('Admin')) {
                 return true;

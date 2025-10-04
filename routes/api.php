@@ -14,11 +14,13 @@ Route::controller(AuthController::class)
         Route::post('register', 'register')->middleware('guest:api')->name('register');
         Route::post('login', 'login')->middleware('guest:api')->name('login');
 
-        Route::get('/user', 'user')->middleware('auth:api');
+        Route::get('/user', 'user')->middleware(['auth:api', 'verified.api']);
         Route::post('/logout', 'logout')->middleware('auth:api');
+        Route::post('/email/verification-notification', 'verifyEmail')->middleware(['auth:api'])->name('verification.send');
+        Route::get('/email/verify/{id}/{hash}', 'activeVerificationEmail')->middleware(['signed'])->name('verification.verify');
     });
 
-Route::middleware(['auth:api', 'verified.api'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
     // Post Routing
     Route::prefix('post')
         ->controller(PostController::class)

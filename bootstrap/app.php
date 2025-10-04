@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureEmailIsVerifiedApi;
 use App\Http\Middleware\ThrottleApiRequest;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -21,6 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(prepend: [
             'throttle:api-auth'
+        ]);
+
+        $middleware->alias([
+            'verified.api' => EnsureEmailIsVerifiedApi::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
