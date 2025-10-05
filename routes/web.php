@@ -10,8 +10,8 @@ Route::get('/', function () {
 });
 
 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
+/* Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) { */
+/*     $request->fulfill(); */
 
-    return response()->json(['okk']);
-})->middleware(['auth', 'signed'])->name('verification.verify');
+/*     return response()->json(['okk']); */
+/* })->middleware(['auth', 'signed'])->name('verification.verify'); */

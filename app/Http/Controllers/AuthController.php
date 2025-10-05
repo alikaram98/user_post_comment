@@ -94,7 +94,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'در ارسال لینک فعال سازی مشگلی به وجود آمده',
                 'error' => $e->getMessage(),
-            ]);
+            ], 404);
         }
     }
 
@@ -103,8 +103,16 @@ class AuthController extends Controller
         try {
             $user = User::find($request->route('id'));
 
+            if (! $this->authorizeUrl($user, $request)) {
+                return response()->json([
+                    'message' => 'آدرس معتبر نیست',
+                ]);
+            }
+
             if ($user->hasVerifiedEmail()) {
-                return $this->success('Email already verified.');
+                return response()->json([
+                    'message' => 'این ایمیل قبلا فعال سازی شده است',
+                ]);
             }
 
             if ($user->markEmailAsVerified()) {
@@ -118,5 +126,18 @@ class AuthController extends Controller
                 'message' => 'در فعال سازی ایمیل مشگلی پیش آمده',
             ], 400);
         }
+    }
+
+    public function authorizeUrl(User $user, Request $request)
+    {
+        if (! hash_equals((string) $user->getKey(), (string) $request->route('id'))) {
+            return false;
+        }
+
+        if (! hash_equals(sha1($user->getEmailForVerification()), (string) $request->route('hash'))) {
+            return false;
+        }
+
+        return true;
     }
 }
